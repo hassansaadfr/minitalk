@@ -1,6 +1,18 @@
 #include <unistd.h>
-#include <sys/types.h>
 #include <signal.h>
+#include <stdlib.h>
+
+void	print_err(char *str)
+{
+	int	size;
+
+	size = 0;
+	while (str[size])
+		size++;
+	write(STDERR_FILENO, str, size);
+	write(STDERR_FILENO, "\n", 1);
+	exit(1);
+}
 
 void	ft_putnbr(int n)
 {
@@ -20,30 +32,47 @@ void	ft_putnbr(int n)
 	}
 }
 
-int	handle_sig(void)
+void	write_sig(int byte_received)
 {
-	struct sigaction	*act;
-	struct sigaction	*old_act;
+	static unsigned char	byte_to_char = 0;
+	static int				i = 0;
 
-	if (sigaction(SIGUSR1, act, old_act) == 1)
-		return (1);
+	byte_to_char |= (byte_received << i++);
+	if (i > 7)
+	{
+		if (byte_to_char == '\0')
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			write(STDOUT_FILENO, &byte_to_char, 1);
+		}
+		else
+			write(STDOUT_FILENO, &byte_to_char, 1);
+		i = 0;
+		byte_to_char = 0;
+	}
+}
+
+void	sig_handler(int signal)
+{
+	if (signal == SIGUSR1)
+		write_sig(0);
+	if (signal == SIGUSR2)
+		write_sig(1);
 }
 
 int	main(int argc, char **argv)
 {
-	int		pid;
-
+	(void)argv;
 	if (argc > 1)
-	{
-		write(STDERR_FILENO, "Usage: ./server\n", 16);
-		return (1);
-	}
-	pid = getpid();
-	ft_putnbr(pid);
-	write(STDOUT_FILENO, "\n", 1);
+		print_err("Usage: ./server\n");
+	write(STDOUT_FILENO, "\t\t\033[1;32mPID : ", 15);
+	ft_putnbr(getpid());
+	write(STDOUT_FILENO, "\n\033[0m", 5);
+	if (signal(SIGUSR1, sig_handler) == SIG_ERR)
+		print_err("Error on SIGUSR1");
+	if (signal(SIGUSR2, sig_handler) == SIG_ERR)
+		print_err("Error on SIGUSR2");
 	while (1)
-	{
 		pause();
-	}
 	return (0);
 }

@@ -1,25 +1,55 @@
 #include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
 
-int	is_valid_pid(char *pid)
+void	print_err(char *str)
 {
-	while (*pid)
-	{
-		if (*pid >= '0' && *pid <= '9')
-			pid++;
-		else
-			return (0);
-	}
-	return (1);
+	int	size;
+
+	size = 0;
+	while (str[size])
+		size++;
+	write(STDERR_FILENO, str, size);
+	write(STDERR_FILENO, "\n", 1);
+	exit(1);
 }
 
-int	ft_atoi(char *pid)
+int	get_process_pid(char *pid)
 {
-	int		out;
+	int	pid_nb;
+	int	i;
 
-	out = 0;
+	i = 0;
+	pid_nb = 0;
+	while (pid[i])
+	{
+		if (pid[i] >= '0' && pid[i] <= '9')
+			i++;
+		else
+			print_err("Invalid PID");
+	}
 	while (*pid)
-		out = (out * 10) + *pid++ - '0';
-	return (out);
+		pid_nb = (pid_nb * 10) + *pid++ - '0';
+	return (pid_nb);
+}
+
+void	send_char(int pid, char c)
+{
+	char		i;
+	int			byte;
+
+	i = 0;
+	while (i < 8)
+	{
+		byte = (c >> i++) & 1;
+		usleep(800);
+		if (byte == 0)
+			if (kill(pid, SIGUSR1) == -1)
+				print_err("SIGUSR1 error.\n");
+		if (byte == 1)
+			if (kill(pid, SIGUSR2) == -1)
+				print_err("SIGUSR2 error.\n");
+	}
 }
 
 int	main(int argc, char **argv)
@@ -27,13 +57,10 @@ int	main(int argc, char **argv)
 	int	pid;
 
 	if (argc != 3)
-	{
-		write(STDERR_FILENO, "Usage: ./server PID \"This is the message\"\n", 42);
-		return (1);
-	}
-	if (is_valid_pid(argv[1]) == 0)
-		write(STDERR_FILENO, "Invalid PID\n", 13);
-	pid = ft_atoi(argv[1]);
-	write(STDOUT_FILENO, "\n", 1);
+		print_err("Usage: ./client PID \"Message to send to the server");
+	pid = get_process_pid(argv[1]);
+	while (*argv[2])
+		send_char(pid, *argv[2]++);
+	send_char(pid, 0);
 	return (0);
 }
