@@ -2,7 +2,7 @@ NAME			=	minitalk
 
 CC				=	clang
 
-CFLAGS			=	-Wall -Werror -Wextra
+CFLAGS			=	-Wall -Werror -Wextra -g
 
 SRCS			=	server.c client.c
 

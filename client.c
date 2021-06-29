@@ -42,7 +42,7 @@ void	send_char(int pid, char c)
 	while (i < 8)
 	{
 		byte = (c >> i++) & 1;
-		usleep(800);
+		usleep(50);
 		if (byte == 0)
 			if (kill(pid, SIGUSR1) == -1)
 				print_err("SIGUSR1 error.\n");

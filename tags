@@ -1,0 +1,6 @@
+Mclient	client.c	/^int	main(int argc, char **argv)$/
+Mserver	server.c	/^int	main(int argc, char **argv)$/
+ft_atoi	client.c	/^int	ft_atoi(char *pid)$/
+ft_putnbr	server.c	/^void	ft_putnbr(int n)$/
+handle_sig	server.c	/^int	handle_sig(void)$/
+is_valid_pid	client.c	/^int	is_valid_pid(char *pid)$/

@@ -52,8 +52,10 @@ void	write_sig(int byte_received)
 	}
 }
 
-void	sig_handler(int signal)
+void	sig_handler(int signal, siginfo_t *info, void *context)
 {
+	(void)info;
+	(void)context;
 	if (signal == SIGUSR1)
 		write_sig(0);
 	if (signal == SIGUSR2)
@@ -62,16 +64,23 @@ void	sig_handler(int signal)
 
 int	main(int argc, char **argv)
 {
+	struct sigaction	sig;
+	siginfo_t			info;
+
 	(void)argv;
 	if (argc > 1)
 		print_err("Usage: ./server\n");
+	sig.sa_flags = info;
+	sig.__sigaction_u.__sa_sigaction = sig_handler;
+	sigaction(SIGUSR1, &sig, NULL);
+	sigaction(SIGUSR2, &sig, NULL);
 	write(STDOUT_FILENO, "\t\t\033[1;32mPID : ", 15);
 	ft_putnbr(getpid());
 	write(STDOUT_FILENO, "\n\033[0m", 5);
-	if (signal(SIGUSR1, sig_handler) == SIG_ERR)
-		print_err("Error on SIGUSR1");
-	if (signal(SIGUSR2, sig_handler) == SIG_ERR)
-		print_err("Error on SIGUSR2");
+	// if (signal(SIGUSR1, sig_handler) == SIG_ERR)
+	// 	print_err("Error on SIGUSR1");
+	// if (signal(SIGUSR2, sig_handler) == SIG_ERR)
+	// 	print_err("Error on SIGUSR2");
 	while (1)
 		pause();
 	return (0);
