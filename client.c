@@ -1,6 +1,6 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
+#include "client.h"
+
+int	done = 0;
 
 void	print_err(char *str)
 {
@@ -42,20 +42,34 @@ void	send_char(int pid, char c)
 	while (i < 8)
 	{
 		byte = (c >> i++) & 1;
-		usleep(50);
 		if (byte == 0)
 			if (kill(pid, SIGUSR1) == -1)
 				print_err("SIGUSR1 error.\n");
 		if (byte == 1)
 			if (kill(pid, SIGUSR2) == -1)
 				print_err("SIGUSR2 error.\n");
+		if (!done)
+			pause();
 	}
+}
+
+void	sig_handler(int signal, siginfo_t *info, void *context)
+{
+	(void)signal;
+	(void)info;
+	(void)context;
+	if (signal == SIGUSR2)
+		done = 1;
 }
 
 int	main(int argc, char **argv)
 {
-	int	pid;
+	int					pid;
+	struct sigaction	sig;
 
+	sig.__sigaction_u.__sa_sigaction = sig_handler;
+	sigaction(SIGUSR1, &sig, NULL);
+	sigaction(SIGUSR2, &sig, NULL);
 	if (argc != 3)
 		print_err("Usage: ./client PID \"Message to send to the server");
 	pid = get_process_pid(argv[1]);
