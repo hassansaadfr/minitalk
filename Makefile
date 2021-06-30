@@ -11,8 +11,8 @@ HEADERS			=	-I includes
 SRCS_CLIENT		=	client.c
 SRCS_SERVER		=	server.c
 
-CLIENT_OBJS		=	${addprefix srcs/client_scrs/,${SRCS_CLIENT:.c=.o}}
-SERVER_OBJS		=	${addprefix srcs/server_srcs/,${SRCS_SERVER:.c=.o}}
+CLIENT_OBJS		=	${addprefix srcs/,${SRCS_CLIENT:.c=.o}}
+SERVER_OBJS		=	${addprefix srcs/,${SRCS_SERVER:.c=.o}}
 
 $(NAME)			:	$(CLIENT) $(SERVER)
 
