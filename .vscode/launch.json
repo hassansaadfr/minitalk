@@ -6,9 +6,10 @@
 	"configurations": [
 		{
 			"type": "lldb",
-			"request": "attach",
+			"request": "launch",
 			"name": "Debug",
-			"program": "${workspaceFolder}/server",
+			"program": "${workspaceFolder}/client",
+			"args": ["85254", "lol"]
 		}
 	]
 }
