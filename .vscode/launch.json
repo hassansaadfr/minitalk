@@ -8,8 +8,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug",
-			"program": "${workspaceFolder}/client",
-			"args": ["85254", "lol"]
+			"program": "${workspaceFolder}/server",
 		}
 	]
 }

@@ -4,12 +4,12 @@ CLIENT			=	client
 
 CC				=	clang
 
-CFLAGS			=	-Wall -Werror -Wextra -g
+CFLAGS			=	-Wall -Werror -Wextra
 
 HEADERS			=	-I includes
 
-SRCS_CLIENT		=	client.c
-SRCS_SERVER		=	server.c
+SRCS_CLIENT		=	client.c utils.c
+SRCS_SERVER		=	server.c utils.c
 
 CLIENT_OBJS		=	${addprefix srcs/,${SRCS_CLIENT:.c=.o}}
 SERVER_OBJS		=	${addprefix srcs/,${SRCS_SERVER:.c=.o}}

@@ -6,4 +6,6 @@
 # include <signal.h>
 # include <stdlib.h>
 
+# include "utils.h"
+
 #endif

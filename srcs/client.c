@@ -1,16 +1,5 @@
 #include "client.h"
-
-void	print_err(char *str)
-{
-	int	size;
-
-	size = 0;
-	while (str[size])
-		size++;
-	write(STDERR_FILENO, str, size);
-	write(STDERR_FILENO, "\n", 1);
-	exit(1);
-}
+#include "utils.h"
 
 int	get_process_pid(char *pid)
 {
@@ -40,18 +29,14 @@ void	send_char(int pid, char c)
 	while (i < 8)
 	{
 		byte = (c >> i++) & 1;
-		if (byte == 0)
-			if (kill(pid, SIGUSR1) == -1)
-				print_err("SIGUSR1 error.\n");
-		if (byte == 1)
-			if (kill(pid, SIGUSR2) == -1)
-				print_err("SIGUSR2 error.\n");
+		if (kill(pid, SIGUSR1 + (byte * 2)) == -1)
+			print_err("Signal error.");
+		usleep(10);
 	}
 }
 
 void	sig_handler(int signal)
 {
-	(void)signal;
 	if (signal == SIGUSR2)
 		exit(1);
 }
@@ -61,6 +46,7 @@ int	main(int argc, char **argv)
 	int					pid;
 	struct sigaction	sig;
 
+	sig.sa_flags = SA_RESTART;
 	sig.sa_handler = sig_handler;
 	sigaction(SIGUSR1, &sig, NULL);
 	sigaction(SIGUSR2, &sig, NULL);
