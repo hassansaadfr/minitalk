@@ -4,7 +4,7 @@ CLIENT			=	client
 
 CC				=	clang
 
-CFLAGS			=	-Wall -Werror -Wextra
+CFLAGS			=	-Wall -Werror -Wextra -g
 
 HEADERS			=	-I includes
 

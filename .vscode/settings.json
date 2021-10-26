@@ -3,7 +3,8 @@
 		"*.c": "c",
 		"*.ts": "typescript",
 		"stdio.h": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"*.tcc": "c"
 	},
 	"makefile.launchConfigurations": [
 		{
